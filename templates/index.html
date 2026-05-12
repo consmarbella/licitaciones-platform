@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Licitaciones Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root{--primary:#1a1a1a;--accent:#C8A045;}
+        .badge-rentable{background:#22c55e;color:white;padding:2px 8px;border-radius:999px;font-size:12px}
+        .badge-no-rentable{background:#ef4444;color:white;padding:2px 8px;border-radius:999px;font-size:12px}
+        .badge-pendiente{background:#6b7280;color:white;padding:2px 8px;border-radius:999px;font-size:12px}
+        .badge-postular{background:#3b82f6;color:white;padding:2px 8px;border-radius:999px;font-size:12px}
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900 font-sans">
+    <nav class="bg-[#1a1a1a] text-white px-6 py-4 sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <a href="/" class="text-xl font-bold text-[#C8A045]">📋 Licitaciones Platform</a>
+            <div class="flex gap-4 text-sm">
+                <a href="/" class="hover:text-[#C8A045] transition">Dashboard</a>
+                <a href="/buscar" class="hover:text-[#C8A045] transition">Buscar</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto p-6">
+        <h1 class="text-3xl font-bold mb-6">📊 Dashboard de Licitaciones</h1>
+
+        {% if licitaciones %}
+        <div class="overflow-x-auto">
+            <table class="w-full bg-white rounded-xl shadow-sm border">
+                <thead>
+                    <tr class="bg-gray-100 text-left text-sm">
+                        <th class="p-3">N°</th>
+                        <th class="p-3">Nombre</th>
+                        <th class="p-3">Organismo</th>
+                        <th class="p-3">Presupuesto</th>
+                        <th class="p-3">Ganancia Est.</th>
+                        <th class="p-3">Decisión</th>
+                        <th class="p-3">Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for l in licitaciones %}
+                    <tr class="border-t hover:bg-gray-50 text-sm">
+                        <td class="p-3 font-mono">{{ l[1] or '—' }}</td>
+                        <td class="p-3 max-w-xs truncate">
+                            <a href="/licitacion/{{ l[0] }}" class="text-blue-600 hover:underline">
+                                {{ l[2] or l[3] or 'Sin nombre' }}
+                            </a>
+                        </td>
+                        <td class="p-3 text-gray-500">{{ l[4] or '—' }}</td>
+                        <td class="p-3 font-mono">
+                            {% if l[11] %}
+                                ${{ "{:,.0f}".format(l[11]) }}
+                            {% else %}—{% endif %}
+                        </td>
+                        <td class="p-3 font-mono">
+                            {% if l[13] %}
+                                <span class="{% if l[13] > 0 %}text-green-600{% else %}text-red-600{% endif %}">
+                                    ${{ "{:,.0f}".format(l[13]) }}
+                                </span>
+                            {% else %}—{% endif %}
+                        </td>
+                        <td class="p-3">
+                            {% set d = l[15] or 'pendiente' %}
+                            {% if d == 'rentable' %}
+                                <span class="badge-rentable">💰 Rentable</span>
+                            {% elif d == 'no-rentable' %}
+                                <span class="badge-no-rentable">❌ No rentable</span>
+                            {% elif d == 'postular' %}
+                                <span class="badge-postular">🚀 Postular</span>
+                            {% else %}
+                                <span class="badge-pendiente">⏳ Pendiente</span>
+                            {% endif %}
+                        </td>
+                        <td class="p-3">
+                            <a href="/licitacion/{{ l[0] }}" class="text-[#C8A045] hover:underline text-xs">Analizar →</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-20 bg-white rounded-xl border">
+            <p class="text-5xl mb-4">📭</p>
+            <h2 class="text-xl font-semibold mb-2">No hay licitaciones aún</h2>
+            <p class="text-gray-500 mb-6">Buscá licitaciones en Mercado Público para empezar</p>
+            <a href="/buscar" class="bg-[#C8A045] text-white px-6 py-3 rounded-xl font-bold hover:bg-yellow-600 transition inline-block">
+                🔍 Buscar licitaciones
+            </a>
+        </div>
+        {% endif %}
+    </main>
+</body>
+</html>
